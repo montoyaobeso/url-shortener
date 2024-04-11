@@ -10,6 +10,8 @@ from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.responses import JSONResponse, RedirectResponse
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from starlette.status import HTTP_504_GATEWAY_TIMEOUT
+from logging_loki import LokiQueueHandler
+from multiprocessing import Queue
 
 from app.code_generator import CodeGenerator
 from app.database.client import RedisClient
@@ -17,8 +19,21 @@ from app.database.models import URL, URLBase, URLInfo
 from app.shortener import Shortener
 from app.telemetry.traces import tracer
 
+from prometheus_fastapi_instrumentator import Instrumentator
+
+
 # Get the general logger
 logger = logging.getLogger(__name__)
+
+loki_logger = LokiQueueHandler(
+    Queue(-1),
+    url=os.environ["LOKI_ENDPOINT"],
+    tags={"application": "meli-url-shortener"},
+    version="0.0.1",
+)
+
+uvicorn_access_logger = logging.getLogger("uvicorn.access")
+uvicorn_access_logger.addHandler(loki_logger)
 
 # Get environment variables
 load_dotenv()
@@ -35,6 +50,8 @@ app = FastAPI(
 
 # Instrument app
 FastAPIInstrumentor.instrument_app(app)
+
+Instrumentator().instrument(app).expose(app)
 
 
 @app.middleware("http")
@@ -101,7 +118,7 @@ async def create_url(url_base: URLBase):
             return URLInfo(**url.model_dump(), short_url=short_url)
     
     except Exception:
-        logger.error(traceback.format_exc())
+        uvicorn_access_logger.error(traceback.format_exc())
         raise HTTPException(
             detail="Oops, something went wrong, try again later.", 
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -147,7 +164,7 @@ async def get_info(code: str):
                 status_code=status.HTTP_404_NOT_FOUND,
             )
     except Exception:
-        logger.error(traceback.format_exc())
+        uvicorn_access_logger.error(traceback.format_exc())
         raise HTTPException(
             detail="Oops, something went wrong, try again later.", 
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -172,7 +189,7 @@ async def delete_url(code: str):
             status_code=status.HTTP_404_NOT_FOUND,
         )
     except Exception:
-        logger.error(traceback.format_exc())
+        uvicorn_access_logger.error(traceback.format_exc())
         raise HTTPException(
             detail="Oops, something went wrong, try again later.", 
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
