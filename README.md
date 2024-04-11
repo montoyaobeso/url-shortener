@@ -31,7 +31,7 @@ Requeriments:
 - Postman (optional)
 
 
-In order to forward from `http://me.li` to `0.0.0.0` URLs, set up the following `host` in the `/etc/hosts` file in Unix based systems:
+In order to forward from `http://me.li` to `0.0.0.0`, set up the following `host` in the `/etc/hosts` file, like in Unix based systems:
 
 ```console
 ## /etc/hosts
