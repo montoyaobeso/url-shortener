@@ -127,6 +127,8 @@ ENV/
 env.bak/
 venv.bak/
 tests
+grafana.db
+__default__.tmpl
 
 # Spyder project settings
 .spyderproject
