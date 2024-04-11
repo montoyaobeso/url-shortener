@@ -18,6 +18,8 @@ services:
       ]
     networks:
       - app-net
+    environment:
+      - LOKI_ENDPOINT=http://loki:3100/loki/api/v1/push
     depends_on:
       - redis
   redis:
@@ -51,9 +53,41 @@ services:
       - COLLECTOR_OTLP_ENABLED=true
     networks:
       - app-net
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./etc/prometheus:/workspace
+    command:
+      - --config.file=/workspace/prometheus.yml
+      - --enable-feature=exemplar-storage
+    networks:
+      - app-net
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+    networks:
+      - app-net
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - ./etc/grafana:/var/lib/grafana
+    networks:
+      - app-net
 volumes:
   cache:
     driver: local
+  grafana_data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./etc/grafana
 networks:
   app-net:
 
