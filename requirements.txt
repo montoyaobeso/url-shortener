@@ -5,11 +5,11 @@ python-dotenv==1.0.1
 validators==0.28.0
 redis==5.0.3
 pyyaml==6.0.1
-opentelemetry-exporter-jaeger==1.21.0
-opentelemetry-instrumentation-fastapi==0.45b
-opentelemetry-api==1.24.0
 opentelemetry-sdk==1.24.0
+opentelemetry-api==1.24.0
+opentelemetry-instrumentation==0.45b0
+opentelemetry-instrumentation-fastapi==0.45b
 opentelemetry-instrumentation-starlette==0.45b0
+opentelemetry-exporter-jaeger==1.21.0
 opentelemetry-exporter-otlp-proto-grpc==1.24.0
 opentelemetry-exporter-jaeger-thrift==1.21.0
-opentelemetry-instrumentation==0.45b0
