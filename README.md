@@ -52,13 +52,9 @@ Then, innitialize the application using docker compose command:
 docker compose up --build --force-recreate
 ```
 
-See the API documentation in the [Swagger](http://me.li/docs) docs site.
+See the API documentation in the [Swagger](http://me.li/docs) docs site or use the file `postman_collection.json` to import the Postman collection and test the API out.
 
 Useful links (dockerized apps):
 - [Grafana](http://localhost:3000)
 - [Jaeger UI](http://localhost:16686)
 - [Prometheus](http://localhost:9090)
-
-
-
-
