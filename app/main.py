@@ -29,7 +29,7 @@ loki_logger = LokiQueueHandler(
     Queue(-1),
     url=os.environ["LOKI_ENDPOINT"],
     tags={"application": "meli-url-shortener"},
-    version="0.0.1",
+    version="1",
 )
 
 uvicorn_access_logger = logging.getLogger("uvicorn.access")
