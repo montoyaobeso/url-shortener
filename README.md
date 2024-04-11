@@ -46,7 +46,7 @@ In order to forward from `http://me.li` to `0.0.0.0`, set up the following `host
 0.0.0.0         me.li
 ```
 
-Then, innitialize the application using docker compose command:
+Then, run the application using docker compose command:
 
 ```console
 docker compose up --build --force-recreate
