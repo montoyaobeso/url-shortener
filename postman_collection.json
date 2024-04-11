@@ -1,0 +1,120 @@
+{
+	"info": {
+		"_postman_id": "e16e0f00-a38c-4d8a-b9a7-1e6d0c69de63",
+		"name": "URL_Shortener",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13777898"
+	},
+	"item": [
+		{
+			"name": "url",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"url\": \"https://www.mercadolibre.com.mx\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1/url",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"path": [
+						"url"
+					],
+					"query": [
+						{
+							"key": "url",
+							"value": "\"this is a test\"",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "forward",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://me.li/IDIQUK",
+					"protocol": "http",
+					"host": [
+						"me",
+						"li"
+					],
+					"path": [
+						"IDIQUK"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://me.li/info/UBAEOX",
+					"protocol": "http",
+					"host": [
+						"me",
+						"li"
+					],
+					"path": [
+						"info",
+						"UBAEOX"
+					],
+					"query": [
+						{
+							"key": "url",
+							"value": "\"this is a test\"",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://me.li/delete/GGRJKK",
+					"protocol": "http",
+					"host": [
+						"me",
+						"li"
+					],
+					"path": [
+						"delete",
+						"GGRJKK"
+					],
+					"query": [
+						{
+							"key": "url",
+							"value": "\"this is a test\"",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
