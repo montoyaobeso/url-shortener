@@ -3,24 +3,22 @@ import logging
 import os
 import time
 import traceback
+from multiprocessing import Queue
 
 import validators
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.responses import JSONResponse, RedirectResponse
-from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from starlette.status import HTTP_504_GATEWAY_TIMEOUT
 from logging_loki import LokiQueueHandler
-from multiprocessing import Queue
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from prometheus_fastapi_instrumentator import Instrumentator
+from starlette.status import HTTP_504_GATEWAY_TIMEOUT
 
 from app.code_generator import CodeGenerator
 from app.database.client import RedisClient
 from app.database.models import URL, URLBase, URLInfo
 from app.shortener import Shortener
 from app.telemetry.traces import tracer
-
-from prometheus_fastapi_instrumentator import Instrumentator
-
 
 # Get the general logger
 logger = logging.getLogger(__name__)
@@ -91,14 +89,14 @@ async def create_url(url_base: URLBase):
     with tracer.start_as_current_span("input-validation"):
         if not validators.url(url_base.url):
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, 
-                detail="The provided URL is not valid."
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="The provided URL is not valid.",
             )
 
     try:
         with tracer.start_as_current_span("code-generation"):
             code = CodeGenerator().get_code()
-        
+
             while redisdb.get_by_id(code):
                 code = CodeGenerator().get_code()
 
@@ -116,12 +114,12 @@ async def create_url(url_base: URLBase):
 
         with tracer.start_as_current_span("return-response"):
             return URLInfo(**url.model_dump(), short_url=short_url)
-    
+
     except Exception:
         uvicorn_access_logger.error(traceback.format_exc())
         raise HTTPException(
-            detail="Oops, something went wrong, try again later.", 
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            detail="Oops, something went wrong, try again later.",
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
 
@@ -129,9 +127,9 @@ async def create_url(url_base: URLBase):
 async def forward(code: str):
     """
     Endpoint to redirect to original URLs.
-    """ 
+    """
 
-    if (url := redisdb.get_by_id(code)):
+    if url := redisdb.get_by_id(code):
         if int(url["is_active"]):
             url["clicks"] = int(url["clicks"]) + 1
             redisdb.set_by_id(code, data=url)
@@ -148,14 +146,13 @@ async def forward(code: str):
         )
 
 
-
 @app.get("/info/{code}")
 async def get_info(code: str):
     """
     Endpoint to get original URLs from shortened URLs.
     """
     try:
-        if (url := redisdb.get_by_id(code)): 
+        if url := redisdb.get_by_id(code):
             url_info = URLInfo(**url, short_url=Shortener().get_url(url["code"]))
             return url_info
         else:
@@ -166,9 +163,10 @@ async def get_info(code: str):
     except Exception:
         uvicorn_access_logger.error(traceback.format_exc())
         raise HTTPException(
-            detail="Oops, something went wrong, try again later.", 
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            detail="Oops, something went wrong, try again later.",
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+
 
 @app.delete(
     "/delete/{code}", response_class=JSONResponse, status_code=status.HTTP_200_OK
@@ -178,7 +176,7 @@ async def delete_url(code: str):
     Endpoint to delete (deactivate) URLs.
     """
     try:
-        if (url := redisdb.get_by_id(code)):
+        if url := redisdb.get_by_id(code):
             if int(url["is_active"]):
                 url["is_active"] = 0
                 redisdb.set_by_id(code, data=url)
@@ -191,6 +189,6 @@ async def delete_url(code: str):
     except Exception:
         uvicorn_access_logger.error(traceback.format_exc())
         raise HTTPException(
-            detail="Oops, something went wrong, try again later.", 
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+            detail="Oops, something went wrong, try again later.",
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )

@@ -12,7 +12,7 @@ load_dotenv()
 
 # Set trace provider
 trace.set_tracer_provider(
-TracerProvider(
+    TracerProvider(
         resource=Resource.create({SERVICE_NAME: os.environ["JAEGER_SERVICE_NAME"]})
     )
 )
@@ -23,7 +23,7 @@ jaeger_exporter = JaegerExporter(
     # configure agent
     agent_host_name=os.environ["JAEGER_HOST"],
     agent_port=int(os.environ["JAEGER_PORT"]),
-    udp_split_oversized_batches=True
+    udp_split_oversized_batches=True,
 )
 
 # Create a BatchSpanProcessor and add the exporter to it
