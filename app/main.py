@@ -20,7 +20,10 @@ from app.database.models import URL, URLBase, URLInfo
 from app.shortener import Shortener
 from app.telemetry.traces import tracer
 
-# Get the general logger
+# Get environment variables
+load_dotenv()
+
+# Logging setup
 logger = logging.getLogger(__name__)
 
 loki_logger = LokiQueueHandler(
@@ -33,8 +36,6 @@ loki_logger = LokiQueueHandler(
 uvicorn_access_logger = logging.getLogger("uvicorn.access")
 uvicorn_access_logger.addHandler(loki_logger)
 
-# Get environment variables
-load_dotenv()
 
 # Get database client
 redisdb = RedisClient()
@@ -48,10 +49,10 @@ app = FastAPI(
 
 # Instrument app
 FastAPIInstrumentor.instrument_app(app)
-
 Instrumentator().instrument(app).expose(app)
 
 
+# Add middleware
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
     start_time = time.time()
@@ -80,6 +81,7 @@ async def timeout_middleware(request: Request, call_next):
         )
 
 
+# Add routes
 @app.post("/url", response_model=URLInfo, status_code=status.HTTP_201_CREATED)
 async def create_url(url_base: URLBase):
     """
