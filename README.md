@@ -1,6 +1,5 @@
 # url-shortener
-MercadoLibre technical challenge project.
-
+FastAPI URL Shortener
 
 # Application Overview
 
