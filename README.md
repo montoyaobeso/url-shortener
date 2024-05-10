@@ -30,7 +30,7 @@ Requeriments:
 - Postman (optional)
 
 
-In order to forward from `http://me.li` to `0.0.0.0`, set up the following `host` in the `/etc/hosts` file, like in Unix based systems:
+In order to forward from `http://short.url` to `0.0.0.0`, set up the following `host` in the `/etc/hosts` file, like in Unix based systems:
 
 ```console
 ## /etc/hosts
@@ -42,7 +42,7 @@ In order to forward from `http://me.li` to `0.0.0.0`, set up the following `host
 127.0.0.1       localhost
 255.255.255.255 broadcasthost
 ::1             localhost
-0.0.0.0         me.li
+0.0.0.0         short.url
 ```
 
 Then, run the application using docker compose command:
@@ -51,7 +51,7 @@ Then, run the application using docker compose command:
 docker compose up --build --force-recreate
 ```
 
-See the API documentation in the [Swagger](http://me.li/docs) docs site or use the file `postman_collection.json` to import the Postman collection and test the API out.
+See the API documentation in the [Swagger](http://short.url/docs) docs site or use the file `postman_collection.json` to import the Postman collection and test the API out.
 
 Useful links (dockerized apps):
 - [Grafana](http://localhost:3000)
