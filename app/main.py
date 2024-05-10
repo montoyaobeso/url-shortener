@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 loki_logger = LokiQueueHandler(
     Queue(-1),
     url=os.environ["LOKI_ENDPOINT"],
-    tags={"application": "meli-url-shortener"},
+    tags={"application": "url-shortener"},
     version="1",
 )
 
@@ -42,7 +42,7 @@ redisdb = RedisClient()
 
 # Initialize FastAPI app
 app = FastAPI(
-    title="MercadoLibre: URL Shortener",
+    title="FastAPI URL Shortener",
     version="0.0.1",
     description="A utility to reduce URLs to a fixed lenght.",
 )
